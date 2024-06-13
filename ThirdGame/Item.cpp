@@ -46,7 +46,7 @@ void AItem::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// 注册事件响应函数onComponentBeginOverlap
+	// 注册事件响应函数onComponentBeginOverlap    ---
 	//MyBoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AItem::NotifyActorBeginOverlap);
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnSphereOverlap);
 
