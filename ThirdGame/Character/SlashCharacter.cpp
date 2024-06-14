@@ -13,10 +13,35 @@ ASlashCharacter::ASlashCharacter()
 
 }
 
+void ASlashCharacter::DisArm()
+{
+	if (EquippedWeapon) {
+		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("SpineSocket"));
+	}
+	
+}
+
+void ASlashCharacter::Arm()
+{
+	if (EquippedWeapon) {
+		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("RightHandSocket"));
+	}
+}
+
 void ASlashCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void ASlashCharacter::AttackEnd()
+{
+	ActionState = EActionState::EAS_Unoccupied;
+}
+
+void ASlashCharacter::FinishArm()
+{
+	ActionState = EActionState::EAS_Unoccupied;
 }
 
 void ASlashCharacter::Tick(float DeltaTime)
@@ -48,7 +73,19 @@ void ASlashCharacter::EKeyPressed()
 	if (OverlappingWeapon) {
 		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"));
 		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
-		
+		OverlappingItem = nullptr;
+		EquippedWeapon = OverlappingWeapon;
+	}else {
+		if (CharacterState != ECharacterState::ECS_Unequipped && ActionState == EActionState::EAS_Unoccupied) {
+			PlayEquipMontage(FName("UnEquip"));
+			CharacterState = ECharacterState::ECS_Unequipped;
+			ActionState = EActionState::EAS_EquippingWeapon;
+		}
+		else if (CharacterState == ECharacterState::ECS_Unequipped && ActionState == EActionState::EAS_Unoccupied && EquippedWeapon) {
+			PlayEquipMontage(FName("Equip"));
+			CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+			ActionState = EActionState::EAS_EquippingWeapon;
+		}
 	}
 }
 
@@ -64,8 +101,8 @@ void ASlashCharacter::Attack()
 void ASlashCharacter::PlayAttackMontage()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance && Attackmontage) {
-		AnimInstance->Montage_Play(Attackmontage);
+	if (AnimInstance && AttackMontage) {
+		AnimInstance->Montage_Play(AttackMontage);
 		const int32 Selection = FMath::RandRange(0, 1);
 		FName SectionName = FName();
 		switch (Selection) {
@@ -78,7 +115,15 @@ void ASlashCharacter::PlayAttackMontage()
 		default:
 			break;
 		}
-		AnimInstance->Montage_JumpToSection(SectionName, Attackmontage);
+		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
 	}
 }
 
+void ASlashCharacter::PlayEquipMontage(FName SectionName)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && EquipMontage) {
+		AnimInstance->Montage_Play(EquipMontage);
+		AnimInstance->Montage_JumpToSection(SectionName, EquipMontage);
+	}
+}

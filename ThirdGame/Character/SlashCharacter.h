@@ -7,6 +7,7 @@
 #include "SlashCharacter.generated.h"
 class AItem;
 class UAnimMontage;
+class AWeapon;
 UCLASS()
 class THIRDGAME_API ASlashCharacter : public ACharacter
 {
@@ -28,13 +29,27 @@ public:
 	UFUNCTION()
 	void PlayAttackMontage();
 
+	UFUNCTION()
+	void PlayEquipMontage(FName SectionName);
+
 	UPROPERTY(EditAnywhere)
 	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
-	
+	UPROPERTY(BlueprintReadWrite)
+	EActionState ActionState = EActionState::EAS_Unoccupied;
 
+
+	UFUNCTION(BlueprintCallable)
+	void DisArm();
+	
+	UFUNCTION(BlueprintCallable)
+	void Arm();
 protected:
 	virtual void BeginPlay() override;
+	UFUNCTION(BlueprintCallable)
+	virtual void AttackEnd();
 
+	UFUNCTION(BlueprintCallable)
+	virtual void FinishArm();
 private:
 
 	UPROPERTY(VisibleInstanceOnly)
@@ -44,10 +59,14 @@ private:
 	*  Animation montages
 	*/
 	UPROPERTY(EditDefaultsOnly, Category = "Montage")
-	UAnimMontage* Attackmontage;
+	UAnimMontage* AttackMontage;
 
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess="true"))
-	EActionState ActionState = EActionState::EAS_Unoccupied;
+	UPROPERTY(EditDefaultsOnly, Category = "Montage")
+	UAnimMontage* EquipMontage;
+
+	
+	UPROPERTY(VisibleAnywhere, Category = "Weapon")
+	AWeapon* EquippedWeapon;
 
 public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) {

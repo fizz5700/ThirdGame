@@ -19,8 +19,9 @@ public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DetalTime) override;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadOnly)
 	class ASlashCharacter* SlashCharacter;
+
 
 	UPROPERTY(BlueprintReadOnly, Category = "MoveMent")
 	class UCharacterMovementComponent* SlashCharacterMovement;

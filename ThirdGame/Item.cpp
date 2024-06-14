@@ -14,10 +14,6 @@ AItem::AItem()
 	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
 	Sphere ->SetupAttachment(GetRootComponent());
 
-	// 创建BoxComponent
-	//MyBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("MyBoxComponent"));
-
-	
 }	
 void AItem::OnSphereOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -29,10 +25,6 @@ void AItem::OnSphereOverlap(class UPrimitiveComponent* OverlappedComp, class AAc
 
 void AItem::OnSphereEndOverlap(class UPrimitiveComponent* OnComponentEndOverlap,  class AActor* OtherActor,  class UPrimitiveComponent*  OtherComp, int32  OtherBodyIndex)
 {
-	//const FString OtherActorName = FString("OnSphereOverlap :") + OtherActor->GetName();
-	//if (GEngine) {
-	//	GEngine->AddOnScreenDebugMessage(1, 30.f, FColor::Blue, OtherActorName);
-	//}
 	ASlashCharacter* SlashCharacter = Cast<ASlashCharacter>(OtherActor);
 	if (SlashCharacter) {
 		SlashCharacter->SetOverlappingItem(nullptr);
@@ -46,8 +38,6 @@ void AItem::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// 注册事件响应函数onComponentBeginOverlap    ---
-	//MyBoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AItem::NotifyActorBeginOverlap);
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnSphereOverlap);
 
 	Sphere->OnComponentEndOverlap.AddDynamic(this, &AItem::OnSphereEndOverlap);

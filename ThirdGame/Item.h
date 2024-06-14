@@ -22,7 +22,6 @@ public:
 	AItem();
 	virtual void Tick(float DeltaTime) override;
 	
-	//virtual void NotifyActorOverlapEnd(AActor* Other, UPrimitiveComponent* OtherComp, int32 UserIndex) override;
 	UFUNCTION()
 	virtual void OnSphereOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
     
@@ -34,12 +33,6 @@ protected:
 	UFUNCTION(BlueprintPure)
 	float TransformedSin();
 
-
-	//UFUNCTION()
-	//void NotifyActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	//UFUNCTION()
-	//void OnSphereEndOverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	UStaticMeshComponent* ItemMesh;
 
@@ -50,14 +43,15 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sine Parameters")
 	float TimeConstant = 5.f;
+	UPROPERTY(VisibleAnywhere)
+	USphereComponent* Sphere;
 private:
 	
 
 	UPROPERTY(VisibleAnywhere)
 	UCapsuleComponent* Capsule;
 
-	UPROPERTY(VisibleAnywhere)
-	USphereComponent* Sphere;
+	
 
 	UPROPERTY(VisibleAnywhere)
 	UBoxComponent* MyBoxComponent;
