@@ -43,6 +43,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void Arm();
+
+	UFUNCTION(BlueprintCallable)
+	void EnableWeaponCollision(ECollisionEnabled::Type CollisionEnabled);
+
+	UFUNCTION(BlueprintCallable)
+	void DisableWeaponCollision(ECollisionEnabled::Type CollisionDisabled);
 protected:
 	virtual void BeginPlay() override;
 	UFUNCTION(BlueprintCallable)

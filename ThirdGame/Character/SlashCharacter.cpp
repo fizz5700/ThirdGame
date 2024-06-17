@@ -4,6 +4,8 @@
 #include "ThirdGame/Item.h"
 #include "ThirdGame/Weapon.h"
 #include "Animation/AnimMontage.h"
+#include "Components/BoxComponent.h"
+
 class UEmhancedInputlocalPlayerSubsystem;
 class UEnhancedInputComponent;
 class AEISCppCharacter;
@@ -25,6 +27,20 @@ void ASlashCharacter::Arm()
 {
 	if (EquippedWeapon) {
 		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("RightHandSocket"));
+	}
+}
+
+void ASlashCharacter::EnableWeaponCollision(ECollisionEnabled::Type CollisionEnabled)
+{
+	if (EquippedWeapon) {
+		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionEnabled);
+	}
+}
+
+void ASlashCharacter::DisableWeaponCollision(ECollisionEnabled::Type CollisionDisabled)
+{
+	if (EquippedWeapon) {
+		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionDisabled);
 	}
 }
 
