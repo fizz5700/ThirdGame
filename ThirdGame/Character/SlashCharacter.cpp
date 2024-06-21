@@ -39,8 +39,9 @@ void ASlashCharacter::EnableWeaponCollision(ECollisionEnabled::Type CollisionEna
 
 void ASlashCharacter::DisableWeaponCollision(ECollisionEnabled::Type CollisionDisabled)
 {
-	if (EquippedWeapon) {
+	if (EquippedWeapon&&EquippedWeapon->GetWeaponBox()) {
 		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionDisabled);
+		EquippedWeapon->IgnoreActors.Empty();
 	}
 }
 
@@ -92,17 +93,31 @@ void ASlashCharacter::EKeyPressed()
 		OverlappingItem = nullptr;
 		EquippedWeapon = OverlappingWeapon;
 	}else {
-		if (CharacterState != ECharacterState::ECS_Unequipped && ActionState == EActionState::EAS_Unoccupied) {
+		if (CanDisarm()) {
 			PlayEquipMontage(FName("UnEquip"));
 			CharacterState = ECharacterState::ECS_Unequipped;
 			ActionState = EActionState::EAS_EquippingWeapon;
-		}
-		else if (CharacterState == ECharacterState::ECS_Unequipped && ActionState == EActionState::EAS_Unoccupied && EquippedWeapon) {
+
+		}else if (CanArm()) {
 			PlayEquipMontage(FName("Equip"));
 			CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
 			ActionState = EActionState::EAS_EquippingWeapon;
 		}
+		
 	}
+}
+
+bool ASlashCharacter::CanDisarm()
+{
+	return ActionState == EActionState::EAS_Unoccupied &&
+		CharacterState != ECharacterState::ECS_Unequipped;
+}
+
+bool ASlashCharacter::CanArm()
+{
+	return ActionState == EActionState::EAS_Unoccupied &&
+		CharacterState == ECharacterState::ECS_Unequipped &&
+		EquippedWeapon;
 }
 
 void ASlashCharacter::Attack()

@@ -21,6 +21,8 @@ protected:
 	UFUNCTION()
 	void OnBoxOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void CreateFields(const FVector& FieldLocation);
 public:
 	AWeapon();
 	void Equip(USceneComponent* InParent, FName InSocketName);
@@ -36,8 +38,11 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* BoxTraceEnd;
+
+	
 public:
 	FORCEINLINE UBoxComponent* GetWeaponBox() const {
 		return WeaponBox;
 	}
+	TArray<AActor*> IgnoreActors;
 };

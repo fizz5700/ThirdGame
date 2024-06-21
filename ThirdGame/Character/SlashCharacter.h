@@ -23,6 +23,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EKeyPressed();
 
+	bool CanDisarm();
+
+	bool CanArm();
+
 	UFUNCTION(BlueprintCallable)
 	void Attack();
 

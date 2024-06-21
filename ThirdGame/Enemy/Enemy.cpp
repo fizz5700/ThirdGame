@@ -4,7 +4,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Animation/AnimMontage.h"
-//#include "Slash/DebugMacros.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 AEnemy::AEnemy()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -34,10 +35,18 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-void AEnemy::GetHit(const FVector& ImpactPoint)
+void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
 {
-	if (GetWorld()) DrawDebugSphere(GetWorld(), ImpactPoint, 8.f, 12, FColor::Red, false,5.f);
+	//if (GetWorld()) DrawDebugSphere(GetWorld(), ImpactPoint, 8.f, 12, FColor::Red, false,5.f);
 	DirectionalHitReact(ImpactPoint);
+
+	if (HitSound) {
+		UGameplayStatics::PlaySoundAtLocation(this, HitSound, ImpactPoint);
+	}
+
+	if (HitParticles&& GetWorld()) {
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticles, ImpactPoint);
+	}
 }
 
 void AEnemy::DirectionalHitReact(const FVector& ImpactPoint)
@@ -55,6 +64,7 @@ void AEnemy::DirectionalHitReact(const FVector& ImpactPoint)
 		Theta *= -1.f;
 	}
 	FName Section("From Back");
+
 	if (Theta >= -45.f && Theta<45.f) {
 		Section = FName("FromFront");
 	}
@@ -66,9 +76,9 @@ void AEnemy::DirectionalHitReact(const FVector& ImpactPoint)
 	}
 
 
-	if (GEngine) {
+	/*if (GEngine) {
 		GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Green, FString::Printf(TEXT("Theta:%f"), Theta));
-	}
+	}*/
 	PlayMotageHitReact(Section);
 }
 
