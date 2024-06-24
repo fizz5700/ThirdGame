@@ -7,6 +7,7 @@
 
 class USoundBase;
 class UBoxComponent;
+class UNiagaraComponent;
 UCLASS()
 class THIRDGAME_API AWeapon : public AItem
 {

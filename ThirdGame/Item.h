@@ -45,6 +45,9 @@ protected:
 	float TimeConstant = 5.f;
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* Sphere;
+
+	UPROPERTY(EditAnywhere)
+	class UNiagaraComponent* EmbersEffect;
 private:
 	
 

@@ -20,12 +20,16 @@ public:
 	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
 protected:
 	virtual void BeginPlay() override;
+	UPROPERTY(VisibleAnyWhere, BlueprintReadWrite)
+	class UCapsuleComponent* Capsule;
 
-private:	
-	UPROPERTY(VisibleAnyWhere)
+	UPROPERTY(VisibleAnyWhere, BlueprintReadWrite)
 	UGeometryCollectionComponent* GeometryCollection;
+private:	
 
 	UPROPERTY(EditAnyWhere)
-	UClass* TreasureClass;
+	TArray<TSubclassOf<class ATreasure>> TreasureClasses;
+
+	bool bBroken = false;
 
 };
