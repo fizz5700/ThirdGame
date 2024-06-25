@@ -5,8 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "../Interfaces/HitInterface.h"
+#include "../Components/AttributeComponent.h"
+#include "../HUD/HealthBarComponent.h"
 #include "Enemy.generated.h"
 class UAnimMontage;
+class UAttributeComponent;
+class UHealthBarComponent;
+
 UCLASS()
 class THIRDGAME_API AEnemy : public ACharacter,public IHitInterface
 {
@@ -42,4 +47,10 @@ private:
 	USoundBase* HitSound;
 	UPROPERTY(EditAnywhere, Category = "Sounds")
 	UParticleSystem* HitParticles;
+
+	UPROPERTY(EditAnywhere)
+	UAttributeComponent* Attributes;
+
+	UPROPERTY(EditAnywhere)
+	UWidgetComponent* HealthBar;
 };

@@ -6,6 +6,9 @@
 #include "Animation/AnimMontage.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "../HUD/HealthBarComponent.h"
+#include "../Components/AttributeComponent.h"
+#include "Components/WidgetComponent.h"
 AEnemy::AEnemy()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -15,6 +18,10 @@ AEnemy::AEnemy()
 	GetMesh()->SetGenerateOverlapEvents(true);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	
+	Attributes = CreateAbstractDefaultSubobject<UAttributeComponent>(TEXT("Attributes"));
+	HealthBar= CreateAbstractDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
+	HealthBar->SetupAttachment(GetRootComponent());
+
 }
 
 void AEnemy::BeginPlay()

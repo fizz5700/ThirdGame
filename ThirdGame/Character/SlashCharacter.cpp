@@ -103,7 +103,7 @@ void ASlashCharacter::EKeyPressed()
 			CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
 			ActionState = EActionState::EAS_EquippingWeapon;
 		}
-		
+		//OverlappingItem = nullptr;
 	}
 }
 
