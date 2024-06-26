@@ -29,4 +29,11 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
 	float Gold;
+
+public:
+	void ReceveDamage(float Damage);
+
+	float GetHealthPercent();
+
+	bool IsAlive();
 };

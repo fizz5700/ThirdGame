@@ -33,6 +33,11 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable)
 	void PlayMotageHitReact(const FName SectionName);
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	
+
 protected:
 	virtual void BeginPlay() override;	
 
@@ -43,6 +48,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Montage")
 	UAnimMontage* HitReactMontage;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Montage")
+	UAnimMontage* DeathMontage;
+
 	UPROPERTY(EditAnywhere, Category = "Sounds")
 	USoundBase* HitSound;
 	UPROPERTY(EditAnywhere, Category = "Sounds")
@@ -52,5 +60,5 @@ private:
 	UAttributeComponent* Attributes;
 
 	UPROPERTY(EditAnywhere)
-	UWidgetComponent* HealthBar;
+	UHealthBarComponent* HealthBarWidget;
 };
