@@ -71,6 +71,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	double PatrolRadius = 200.f;
+
+	UPROPERTY(EditAnywhere)
+	double AcceptanceRadius = 15.f;
 	UFUNCTION()
 	AActor* choosePatrolTarget();
 private:
