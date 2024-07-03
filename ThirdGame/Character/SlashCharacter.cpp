@@ -12,7 +12,6 @@ class AEISCppCharacter;
 ASlashCharacter::ASlashCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 void ASlashCharacter::DisArm()
