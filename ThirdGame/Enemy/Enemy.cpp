@@ -31,7 +31,10 @@ AEnemy::AEnemy()
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	
+	PawnSensing = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensing"));
+	PawnSensing->SightRadius = 4000.f;
+	PawnSensing->SetPeripheralVisionAngle(45.f);
+
 }
 
 void AEnemy::BeginPlay()
@@ -44,14 +47,15 @@ void AEnemy::BeginPlay()
 	}
 	MoveToTarget(PatrolTarget);
 	
+	if (PawnSensing) {
+		PawnSensing->OnSeePawn.AddDynamic(this,&AEnemy::PawnSeen);
+	}
 }
 
 bool AEnemy::InTarGetRange(AActor* Target, double Radius)
 {
 	if (Target==nullptr) return false;
 	const double DistanceToTarget = (Target->GetActorLocation() - GetActorLocation()).Size();
-	if (GetWorld()) DrawDebugSphere(GetWorld(), Target->GetActorLocation(), 25.f, 12, FColor::Green, false, -1.f);
-	if (GetWorld()) DrawDebugSphere(GetWorld(), GetActorLocation(), 25.f, 12, FColor::Red, false, -1.f);
 	return DistanceToTarget<=Radius;
 }
 
@@ -60,20 +64,44 @@ bool AEnemy::InTarGetRange(AActor* Target, double Radius)
 void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (CombatTarget) {
-		if (!InTarGetRange(CombatTarget,CombarRadius)) {
-			CombatTarget = nullptr;
-			if (HealthBarWidget) {
-				HealthBarWidget->SetVisibility(false);
-			}
-		}
+	if (EnemyState > EEnemyState::EES_Patrolling) {
+		CheckCombatTarget();
 	}
+	else {
+		CheckPartroTarget();
+	}
+	
+	
+}
+
+void AEnemy::CheckPartroTarget()
+{
 	if (InTarGetRange(PatrolTarget, PatrolRadius)) {
 		PatrolTarget = choosePatrolTarget();
 		if (PatrolTarget) {
-			GetWorldTimerManager().SetTimer(PatroTimer, this, &AEnemy::PatroTimerFinished, 5.f);
+			GetWorldTimerManager().SetTimer(PatroTimer, this, &AEnemy::PatroTimerFinished, FMath::RandRange(5.f, 10.f));
 		}
+	}
+}
+
+void AEnemy::CheckCombatTarget()
+{
+	if (!InTarGetRange(CombatTarget, CombarRadius)) {
+		CombatTarget = nullptr;
+		if (HealthBarWidget) {
+			HealthBarWidget->SetVisibility(false);
+		}
+		EnemyState = EEnemyState::EES_Patrolling;
+		GetCharacterMovement()->MaxWalkSpeed = 125.f;
+		MoveToTarget(PatrolTarget);
+	}
+	else if (!InTarGetRange(CombatTarget, AttackRadius)&& EnemyState != EEnemyState::EES_Chasing) {
+		EnemyState = EEnemyState::EES_Chasing;
+		GetCharacterMovement()->MaxWalkSpeed = 300.f;
+		MoveToTarget(CombatTarget);
+	}
+	else if (InTarGetRange(CombatTarget, AttackRadius) && EnemyState != EEnemyState::EES_Attacking) {
+		EnemyState = EEnemyState::EES_Attacking;
 	}
 }
 
@@ -121,6 +149,20 @@ AActor* AEnemy::choosePatrolTarget()
 	}
 
 	return nullptr;
+}
+void AEnemy::PawnSeen(APawn* SeenPawn)
+{
+	if (EnemyState == EEnemyState::EES_Chasing) return;
+	if (SeenPawn->ActorHasTag(FName("SlashCharacter"))) {
+		GetWorldTimerManager().ClearTimer(PatroTimer);
+		GetCharacterMovement()->MaxWalkSpeed=300.F;
+		CombatTarget = SeenPawn;
+		if (EnemyState != EEnemyState::EES_Attacking) {
+			EnemyState = EEnemyState::EES_Chasing;
+			MoveToTarget(CombatTarget);
+		}
+	}
+	
 }
 void AEnemy::MoveToTarget(AActor* Target)
 {
@@ -235,6 +277,9 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 
 	}
 	CombatTarget = DamageCauser;
+	EnemyState = EEnemyState::EES_Chasing;
+	GetCharacterMovement()->MaxWalkSpeed = 300.f;
+	MoveToTarget(CombatTarget);
 	return 0.0f;
 }
 

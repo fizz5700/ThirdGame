@@ -23,6 +23,10 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	void CheckPartroTarget();
+
+	void CheckCombatTarget();
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
@@ -63,6 +67,12 @@ public:
 	TArray<AActor*> PatrolTargets;
 
 protected:
+	/**
+	*Components
+	*/
+	UPROPERTY(VisibleAnywhere)
+	UPawnSensingComponent* PawnSensing;
+
 	virtual void BeginPlay() override;	
 	UPROPERTY(BlueprintReadOnly)
 	EDeathPose DeathPose = EDeathPose::EDP_Alive;
@@ -76,6 +86,9 @@ protected:
 	double AcceptanceRadius = 15.f;
 	UFUNCTION()
 	AActor* choosePatrolTarget();
+
+	UFUNCTION()
+	void PawnSeen(APawn* SeenPawn);
 private:
 	/*
 	*  Animation montages
@@ -99,5 +112,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	double CombarRadius = 500.f;
+
+	UPROPERTY(EditAnywhere)
+	double AttackRadius = 150.f;
 	
+	EEnemyState EnemyState = EEnemyState::EES_Patrolling;
 };

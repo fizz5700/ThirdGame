@@ -47,7 +47,7 @@ void ASlashCharacter::DisableWeaponCollision(ECollisionEnabled::Type CollisionDi
 void ASlashCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	Tags.Add(FName("SlashCharacter"));
 }
 
 void ASlashCharacter::AttackEnd()
