@@ -17,7 +17,7 @@ void UAttributeComponent::BeginPlay()
 	
 }
 
-void UAttributeComponent::ReceveDamage(float Damage)
+void UAttributeComponent::ReceiveDamage(float Damage)
 {
 	Health = FMath::Clamp(Health - Damage,0.f,MaxHealth);
 }

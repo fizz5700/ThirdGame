@@ -31,9 +31,10 @@ private:
 	float Gold;
 
 public:
-	void ReceveDamage(float Damage);
+	void ReceiveDamage(float Damage);
 
 	float GetHealthPercent();
 
 	bool IsAlive();
+
 };

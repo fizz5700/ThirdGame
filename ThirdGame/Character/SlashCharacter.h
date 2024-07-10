@@ -2,14 +2,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "BaseCharacter.h"
 #include "CharacterTypes.h"
 #include "SlashCharacter.generated.h"
 class AItem;
 class UAnimMontage;
-class AWeapon;
+
 UCLASS()
-class THIRDGAME_API ASlashCharacter : public ACharacter
+class THIRDGAME_API ASlashCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 
@@ -27,11 +27,9 @@ public:
 
 	bool CanArm();
 
-	UFUNCTION(BlueprintCallable)
-	void Attack();
+	virtual void Attack() override;
 
-	UFUNCTION()
-	void PlayAttackMontage();
+	bool CanAttack();
 
 	UFUNCTION()
 	void PlayEquipMontage(FName SectionName);
@@ -48,15 +46,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Arm();
 
-	UFUNCTION(BlueprintCallable)
-	void EnableWeaponCollision(ECollisionEnabled::Type CollisionEnabled);
+	
 
 	UFUNCTION(BlueprintCallable)
 	void DisableWeaponCollision(ECollisionEnabled::Type CollisionDisabled);
 protected:
 	virtual void BeginPlay() override;
-	UFUNCTION(BlueprintCallable)
-	virtual void AttackEnd();
+	
+	virtual void AttackEnd() override;
 
 	UFUNCTION(BlueprintCallable)
 	virtual void FinishArm();
@@ -64,19 +61,9 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly)
 	AItem* OverlappingItem;
-	
-    /*
-	*  Animation montages
-	*/
-	UPROPERTY(EditDefaultsOnly, Category = "Montage")
-	UAnimMontage* AttackMontage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Montage")
 	UAnimMontage* EquipMontage;
-
-	
-	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	AWeapon* EquippedWeapon;
 
 public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) {
