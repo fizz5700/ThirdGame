@@ -3,10 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../Interfaces/HitInterface.h"
-#include "../HUD/HealthBarComponent.h"
-#include "../Character/CharacterTypes.h"
-#include "../Character/BaseCharacter.h"
+#include "ThirdGame/Interfaces/HitInterface.h"
+#include "ThirdGame/HUD/HealthBarComponent.h"
+#include "ThirdGame/Character/CharacterTypes.h"
+#include "ThirdGame/Character/BaseCharacter.h"
 #include "Enemy.generated.h"
 
 class UHealthBarComponent;
@@ -72,6 +72,8 @@ protected:
 	void PawnSeen(APawn* SeenPawn);
 
 	virtual void Attack() override;
+
+
 	
 private:
 	UPROPERTY(EditAnywhere)
@@ -104,7 +106,8 @@ private:
 	bool IsAttacking();
 	bool IsDead();
 	bool IsEngaged();
-	virtual void AttackEnd() override;
+	UFUNCTION(BlueprintCallable)
+	void AttackEnd();
 	void ClearPatrolTimer();
 	void StartAttackTimer();
 	void ClearAttackTimer();

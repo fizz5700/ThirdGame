@@ -3,8 +3,8 @@
 
 #include "BaseCharacter.h"
 #include "Components/BoxComponent.h"
-#include "../Interfaces/HitInterface.h"
-#include "../Components/AttributeComponent.h"
+#include "ThirdGame/Interfaces/HitInterface.h"
+#include "ThirdGame/Components/AttributeComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "ThirdGame/Weapon.h"
@@ -33,7 +33,6 @@ void ABaseCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor* H
 {
 	if (IsAlive() && Hitter)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("In Base and IsAlive"));
 		DirectionalHitReact(Hitter->GetActorLocation());
 	}
 	else Die();
@@ -116,6 +115,8 @@ void ABaseCharacter::PlayMotageHitReact(const FName SectionName)
 
 void ABaseCharacter::Die()
 {
+	Tags.Add(FName("Dead"));
+	PlayDeathMontage();
 }
 
 
@@ -129,9 +130,9 @@ void ABaseCharacter::Attack()
 
 }
 
-void ABaseCharacter::AttackEnd()
-{
-}
+//void ABaseCharacter::AttackEnd()
+//{
+//}
 
 int32 ABaseCharacter::PlayRandomMontageSection(UAnimMontage* Montage, const TArray<FName>& SectionNames)
 {
@@ -212,4 +213,25 @@ void ABaseCharacter::StopAttackMontage()
 	{
 		AnimInstance->Montage_Stop(0.25f, AttackMontage);
 	}
+}
+
+
+FVector ABaseCharacter::GetTranslationWarpTarget()
+{
+	if (CombatTarget==nullptr) return FVector();
+
+	const FVector CombatTargetLocation = CombatTarget->GetActorLocation();
+	const FVector Location = GetActorLocation();
+	FVector TargetToMe=(Location - CombatTargetLocation).GetSafeNormal();
+	TargetToMe *= WarpTargetDistance;
+	
+	return CombatTargetLocation + TargetToMe;
+}
+
+FVector ABaseCharacter::GetRotationWarpTarget()
+{
+	if (CombatTarget) {
+		return CombatTarget->GetActorLocation();
+	}
+	return FVector();
 }

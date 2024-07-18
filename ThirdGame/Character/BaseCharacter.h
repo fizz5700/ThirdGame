@@ -3,7 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "../Interfaces/HitInterface.h"
+#include "ThirdGame/Interfaces/HitInterface.h"
 #include "CharacterTypes.h"
 #include "BaseCharacter.generated.h"
 
@@ -33,7 +33,7 @@ public:
 	*  enemy
 	*/
 
-	 void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
+	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
 
 	bool IsAlive();
 
@@ -57,8 +57,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void Attack();
 
+	//UFUNCTION(BlueprintCallable)
+	//virtual void AttackEnd();
+
 	UFUNCTION(BlueprintCallable)
-	virtual void AttackEnd();
+	FVector GetTranslationWarpTarget();
+
+	UFUNCTION(BlueprintCallable)
+	FVector GetRotationWarpTarget();
 
 	int32 PlayRandomMontageSection(UAnimMontage* Montage, const TArray<FName>& SectionNames);
 
@@ -105,9 +111,12 @@ public:
 
 	virtual void HandleDamage(float DamageAmount);
 
+	UFUNCTION(BlueprintCallable)
 	void SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled);
 
 	void StopAttackMontage();
+
+	
 
 	void PlayMontageSection(UAnimMontage* Montage, const FName& SectionName);
 
@@ -119,7 +128,10 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TEnumAsByte<EDeathPose> DeathPose;
 
-private:
-	
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	double WarpTargetDistance = 75.f;
+
+public:
+	FORCEINLINE TEnumAsByte<EDeathPose> GetDeathPose() const { return DeathPose; }
 	
 };

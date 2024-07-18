@@ -3,11 +3,11 @@
 #include "Enemy.h"
 #include "AIController.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "../Components/AttributeComponent.h"
+#include "ThirdGame/Components/AttributeComponent.h"
 #include "Perception/PawnSensingComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ThirdGame/Weapon.h"
-#include "../HUD/HealthBarComponent.h"
+#include "ThirdGame/HUD/HealthBarComponent.h"
 AEnemy::AEnemy()
 {
 	
@@ -44,7 +44,6 @@ void AEnemy::BeginPlay()
 	
 	if (PawnSensing) PawnSensing->OnSeePawn.AddDynamic(this, &AEnemy::PawnSeen);
 	InitializeEnemy();
-	Tags.Add(FName("Enemy"));
 }
 
 bool AEnemy::InTarGetRange(AActor* Target, double Radius)
@@ -173,6 +172,7 @@ void AEnemy::InitializeEnemy()
 	MoveToTarget(PatrolTarget);
 	HideHealthBar();
 	SpawnDefaultWeapon();
+	Tags.Add(FName("Enemy"));
 }
 
 
@@ -201,9 +201,9 @@ void AEnemy::MoveToTarget(AActor* Target)
 
 void AEnemy::Die()
 {
-	EnemyState=EEnemyState::EES_Dead;
+	Super::Die();
 
-	PlayDeathMontage();
+	EnemyState=EEnemyState::EES_Dead;
 
 	ClearAttackTimer();
 
@@ -214,6 +214,8 @@ void AEnemy::Die()
 	SetLifeSpan(DeathLifeSpan);
 	
 	GetCharacterMovement()->bOrientRotationToMovement = false;
+
+	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 
