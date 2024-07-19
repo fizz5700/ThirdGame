@@ -13,10 +13,12 @@
 #include "Animation/AnimMontage.h"
 #include "ThirdGame/HUD/SlashHUD.h"
 #include "ThirdGame/HUD/SlashOverlay.h"
+#include "ThirdGame/Interfaces/PickUpInterface.h"
 
 class UEmhancedInputlocalPlayerSubsystem;
 class UEnhancedInputComponent;
 class AEISCppCharacter;
+class PickUpInterface;
 ASlashCharacter::ASlashCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -79,6 +81,19 @@ float ASlashCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 	SetHUDHealth();
 	return DamageAmount;
 
+}
+
+void ASlashCharacter::SetOverlappingItem(AItem* Item)
+{
+	OverlappingItem = Item;
+}
+
+void ASlashCharacter::AddSoul(ASoul* Soul)
+{
+	if (SlashOverlay && Attributes) {
+		//SlashOverlay->SetSoulsText(1);
+		UE_LOG(LogTemp,Warning,TEXT("ASlashCharacter::AddSoul"));
+	}
 }
 
 void ASlashCharacter::SetHUDHealth()

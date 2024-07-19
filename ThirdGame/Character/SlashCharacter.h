@@ -15,7 +15,7 @@ class UAnimMontage;
 class USlashOverlay;
 
 UCLASS()
-class THIRDGAME_API ASlashCharacter : public ABaseCharacter
+class THIRDGAME_API ASlashCharacter : public ABaseCharacter, public IPickUpInterface
 {
 	GENERATED_BODY()
 
@@ -62,8 +62,9 @@ public:
 	
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
-	
+	virtual void SetOverlappingItem(class AItem* Item) override;
 
+	virtual void AddSoul(class ASoul* Soul) override;
 protected:
 	virtual void BeginPlay() override;
 
@@ -109,9 +110,9 @@ private:
 
 	void SetHUDHealth();
 public:
-	FORCEINLINE void SetOverlappingItem(AItem* Item) {
-		OverlappingItem = Item;
-	}
+	//FORCEINLINE void SetOverlappingItem(AItem* Item) {
+	//	OverlappingItem = Item;
+	//}
 	
 	FORCEINLINE ECharacterState GetCharacterState() const{
 		return CharacterState;

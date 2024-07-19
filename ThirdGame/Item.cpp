@@ -2,7 +2,7 @@
 #include "Item.h"
 #include "Components/SphereComponent.h"
 #include "Components/BoxComponent.h"
-#include "Character/SlashCharacter.h"
+#include "ThirdGame/Interfaces/PickUpInterface.h"
 #include "NiagaraComponent.h"
 
 AItem::AItem()
@@ -17,23 +17,23 @@ AItem::AItem()
 	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
 	Sphere ->SetupAttachment(GetRootComponent());
 
-	EmbersEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("EmbersEffect"));
-	EmbersEffect->SetupAttachment(GetRootComponent());
+	ItemEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("EmbersEffect"));
+	ItemEffect->SetupAttachment(GetRootComponent());
 
 }	
 void AItem::OnSphereOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ASlashCharacter* SlashCharacter = Cast<ASlashCharacter>(OtherActor);
-	if (SlashCharacter) {
-		SlashCharacter->SetOverlappingItem(this);
+	IPickUpInterface* PickUpInterface = Cast<IPickUpInterface>(OtherActor);
+	if (PickUpInterface) {
+		PickUpInterface->SetOverlappingItem(this);
 	}
 }
 
 void AItem::OnSphereEndOverlap(class UPrimitiveComponent* OnComponentEndOverlap,  class AActor* OtherActor,  class UPrimitiveComponent*  OtherComp, int32  OtherBodyIndex)
 {
-	ASlashCharacter* SlashCharacter = Cast<ASlashCharacter>(OtherActor);
-	if (SlashCharacter) {
-		SlashCharacter->SetOverlappingItem(nullptr);
+	IPickUpInterface* PickUpInterface = Cast<IPickUpInterface>(OtherActor);
+	if (PickUpInterface) {
+		PickUpInterface->SetOverlappingItem(nullptr);
 	}
 
 }
