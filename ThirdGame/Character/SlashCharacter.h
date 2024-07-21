@@ -5,6 +5,7 @@
 #include "BaseCharacter.h"
 #include "CharacterTypes.h"
 #include "SlashCharacter.generated.h"
+
 class USpringArmComponent;
 class UCameraComponent;
 class UGroomComponent;
@@ -64,7 +65,9 @@ public:
 
 	virtual void SetOverlappingItem(class AItem* Item) override;
 
-	virtual void AddSoul(class ASoul* Soul) override;
+	virtual void AddSouls(class ASoul* Soul) override;
+
+	virtual void AddGold(class ATreasure* Treasure) override;
 protected:
 	virtual void BeginPlay() override;
 

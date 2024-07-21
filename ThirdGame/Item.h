@@ -27,6 +27,11 @@ public:
     
 	UFUNCTION()
 	virtual void OnSphereEndOverlap(class UPrimitiveComponent* OnComponentEndOverlap, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32  OtherBodyIndex);
+
+	virtual void PickUpSystem();
+
+	virtual void PickUpSound();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -48,6 +53,12 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	class UNiagaraComponent* ItemEffect;
+
+	UPROPERTY(EditAnywhere)
+	class UNiagaraSystem* PcikUpEffect;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* PcikUpSound;
 private:
 	
 

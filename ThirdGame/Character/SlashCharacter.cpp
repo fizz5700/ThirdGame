@@ -14,11 +14,18 @@
 #include "ThirdGame/HUD/SlashHUD.h"
 #include "ThirdGame/HUD/SlashOverlay.h"
 #include "ThirdGame/Interfaces/PickUpInterface.h"
+#include "ThirdGame/Soul.h"
+#include "ThirdGame/Treasure.h"
 
-class UEmhancedInputlocalPlayerSubsystem;
-class UEnhancedInputComponent;
-class AEISCppCharacter;
-class PickUpInterface;
+class USpringArmComponent;
+class UCameraComponent;
+class UGroomComponent;
+class AItem;
+class ASoul;
+class ATreasure;
+class UAnimMontage;
+class USlashOverlay;
+
 ASlashCharacter::ASlashCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -88,13 +95,26 @@ void ASlashCharacter::SetOverlappingItem(AItem* Item)
 	OverlappingItem = Item;
 }
 
-void ASlashCharacter::AddSoul(ASoul* Soul)
+void ASlashCharacter::AddSouls(ASoul* Soul)
 {
 	if (SlashOverlay && Attributes) {
 		//SlashOverlay->SetSoulsText(1);
-		UE_LOG(LogTemp,Warning,TEXT("ASlashCharacter::AddSoul"));
+		Attributes->AddSouls(Soul->GetSouls());
+		SlashOverlay->SetSoulsText(Attributes->GetSouls());
 	}
 }
+
+void ASlashCharacter::AddGold(ATreasure* Treasure)
+{
+	if (SlashOverlay && Attributes) {
+
+		Attributes->AddGold(Treasure->GetGold());
+		SlashOverlay->SetGoldText(Attributes->GetGold());
+		
+	}
+}
+
+
 
 void ASlashCharacter::SetHUDHealth()
 {

@@ -25,10 +25,10 @@ private:
 	float MaxHealth;
 		
 	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
-	float EXP;
+	int32 Souls;
 
 	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
-	float Gold;
+	int32 Gold;
 
 public:
 	void ReceiveDamage(float Damage);
@@ -37,4 +37,10 @@ public:
 
 	bool IsAlive();
 
+	FORCEINLINE int32 GetGold() const { return Gold; }
+	FORCEINLINE int32 GetSouls() const { return Souls; }
+
+	void AddGold(int32 AmountOfGold);
+
+	void AddSouls(int32 NumberOfSouls);
 };

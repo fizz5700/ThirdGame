@@ -24,5 +24,7 @@ class THIRDGAME_API IPickUpInterface
 public:
 	//UFUNCTION(BlueprintNativeEvent)
 	virtual void SetOverlappingItem(class AItem* Item);
-	virtual void AddSoul(class ASoul* Soul);
+	virtual void AddSouls(class ASoul* Soul);
+	virtual void AddGold(class ATreasure* Treasure);
+
 };

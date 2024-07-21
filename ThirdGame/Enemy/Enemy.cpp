@@ -8,6 +8,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ThirdGame/Weapon.h"
 #include "ThirdGame/HUD/HealthBarComponent.h"
+#include "ThirdGame/Soul.h"
+
 AEnemy::AEnemy()
 {
 	
@@ -216,6 +218,18 @@ void AEnemy::Die()
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
 	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	SpawnSoul();
+}
+
+void AEnemy::SpawnSoul()
+{
+	UWorld* World = GetWorld();
+	if (World && SoulClass&& Attributes) {
+		FVector vector = GetActorLocation() + FVector(0.f, 0.f, 75.f);
+		ASoul* SpawnSoul=World->SpawnActor<ASoul>(SoulClass, vector, GetActorRotation());
+		SpawnSoul->SetSouls(Attributes->GetSouls());
+	}
 }
 
 

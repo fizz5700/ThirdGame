@@ -32,6 +32,8 @@ public:
 	
 	virtual void Die() override;
 
+	void SpawnSoul();
+
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	/**
@@ -148,4 +150,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = Combat)
 	double CombatRadius = 500.f;
 
+	UPROPERTY(EditAnywhere, Category = Combat)
+	TSubclassOf<class ASoul> SoulClass;
 };

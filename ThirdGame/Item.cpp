@@ -4,6 +4,8 @@
 #include "Components/BoxComponent.h"
 #include "ThirdGame/Interfaces/PickUpInterface.h"
 #include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 AItem::AItem()
 {
@@ -24,7 +26,9 @@ AItem::AItem()
 void AItem::OnSphereOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	IPickUpInterface* PickUpInterface = Cast<IPickUpInterface>(OtherActor);
+	UE_LOG(LogTemp,Warning,TEXT("iTEM OnSphereOverlap START"));
 	if (PickUpInterface) {
+		UE_LOG(LogTemp, Warning, TEXT("iTEM OnSphereOverlap PickUpInterface EXSIES"));
 		PickUpInterface->SetOverlappingItem(this);
 	}
 }
@@ -36,6 +40,29 @@ void AItem::OnSphereEndOverlap(class UPrimitiveComponent* OnComponentEndOverlap,
 		PickUpInterface->SetOverlappingItem(nullptr);
 	}
 
+}
+
+void AItem::PickUpSystem()
+{
+	if (PcikUpEffect) {
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+			this,
+			PcikUpEffect,
+			GetActorLocation()
+		);
+	}
+}
+
+void AItem::PickUpSound()
+{
+	
+		if (PcikUpSound) {
+			UGameplayStatics::PlaySoundAtLocation(
+				this,
+				PcikUpSound,
+				GetActorLocation()
+			);
+		}
 }
 
 
