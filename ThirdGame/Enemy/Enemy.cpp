@@ -109,7 +109,7 @@ bool AEnemy::CanAttack()
 
 void AEnemy::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
 {
-	
+	UE_LOG(LogTemp, Warning, TEXT("AEnemy GetHit_Implementation"));
 	Super::GetHit_Implementation(ImpactPoint, Hitter);
 	if (!IsDead()) ShowHealthBar();
 	ClearPatrolTimer();
@@ -152,7 +152,6 @@ void AEnemy::PawnSeen(APawn* SeenPawn)
 
 	if (bShouldChaseTarget)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("bShouldChaseTarget"));
 		CombatTarget = SeenPawn;
 		ClearPatrolTimer();
 		ChaseTarget();
@@ -226,9 +225,11 @@ void AEnemy::SpawnSoul()
 {
 	UWorld* World = GetWorld();
 	if (World && SoulClass&& Attributes) {
-		FVector vector = GetActorLocation() + FVector(0.f, 0.f, 75.f);
-		ASoul* SpawnSoul=World->SpawnActor<ASoul>(SoulClass, vector, GetActorRotation());
-		SpawnSoul->SetSouls(Attributes->GetSouls());
+		ASoul* SpawnSoul=World->SpawnActor<ASoul>(SoulClass, GetActorLocation(), GetActorRotation());
+		if (SpawnSoul) {
+			SpawnSoul->SetSouls(Attributes->GetSouls());
+		}
+		
 	}
 }
 
@@ -243,6 +244,7 @@ void AEnemy::PatroTimerFinished()
 
 float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	UE_LOG(LogTemp, Warning, TEXT("ENEMY TakeDamage"));
 	HandleDamage(DamageAmount);
 	CombatTarget = EventInstigator->GetPawn();
 

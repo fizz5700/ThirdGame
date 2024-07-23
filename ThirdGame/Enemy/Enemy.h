@@ -108,8 +108,7 @@ private:
 	bool IsAttacking();
 	bool IsDead();
 	bool IsEngaged();
-	UFUNCTION(BlueprintCallable)
-	void AttackEnd();
+	virtual void AttackEnd() override;
 	void ClearPatrolTimer();
 	void StartAttackTimer();
 	void ClearAttackTimer();

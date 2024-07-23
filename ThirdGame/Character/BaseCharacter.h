@@ -35,6 +35,8 @@ public:
 
 	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
 
+	virtual void PlayDodgeMontage();
+
 	bool IsAlive();
 
 	void PlayHitSound(const FVector& ImpactPoint);
@@ -57,8 +59,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void Attack();
 
-	//UFUNCTION(BlueprintCallable)
-	//virtual void AttackEnd();
+	UFUNCTION(BlueprintCallable)
+	virtual void AttackEnd();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void DodgeEnd();
 
 	UFUNCTION(BlueprintCallable)
 	FVector GetTranslationWarpTarget();
@@ -100,8 +105,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = Combat)
 	AActor* CombatTarget;
 
-	//UPROPERTY(EditDefaultsOnly, Category = Combat)
-	//UAnimMontage* DodgeMontage;
+	UPROPERTY(EditDefaultsOnly, Category = Combat)
+	UAnimMontage* DodgeMontage;
 
 	UPROPERTY(EditAnywhere, Category = Combat)
 	TArray<FName> AttackMontageSections;
@@ -118,7 +123,7 @@ public:
 
 	
 
-	void PlayMontageSection(UAnimMontage* Montage, const FName& SectionName);
+	virtual void PlayMontageSection(UAnimMontage* Montage, const FName& SectionName);
 
 	virtual int32 PlayDeathMontage();
 	

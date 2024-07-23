@@ -19,24 +19,24 @@ public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DetalTime) override;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	class ASlashCharacter* SlashCharacter;
 
 
-	UPROPERTY(BlueprintReadOnly, Category = "MoveMent")
+	UPROPERTY(BlueprintReadWrite, Category = "MoveMent")
 	class UCharacterMovementComponent* SlashCharacterMovement;
 
-	UPROPERTY(BlueprintReadOnly, Category = "MoveMent")
+	UPROPERTY(BlueprintReadWrite, Category = "MoveMent")
 	float GroundSpeed;
-	UPROPERTY(BlueprintReadOnly, Category = "MoveMent")
+	UPROPERTY(BlueprintReadWrite, Category = "MoveMent")
 	bool IsFalling;
-	UPROPERTY(BlueprintReadOnly, Category = "MoveMent | Character State")
+	UPROPERTY(BlueprintReadWrite, Category = "MoveMent | Character State")
 	ECharacterState CharacterState;
 
-	UPROPERTY(BlueprintReadOnly, Category = Movement)
+	UPROPERTY(BlueprintReadWrite, Category = Movement)
 	EActionState ActionState;
 
-	UPROPERTY(BlueprintReadOnly, Category = Movement)
+	UPROPERTY(BlueprintReadWrite, Category = Movement)
 	TEnumAsByte<EDeathPose> DeathPose;
 
 };

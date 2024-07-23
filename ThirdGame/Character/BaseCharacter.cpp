@@ -31,8 +31,10 @@ void ABaseCharacter::Tick(float DeltaTime)
 
 void ABaseCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
 {
+	UE_LOG(LogTemp, Warning, TEXT("ABaseCharacter GetHit_Implementation"));
 	if (IsAlive() && Hitter)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ABaseCharacter GetHit_Implementation  IsAlive"));
 		DirectionalHitReact(Hitter->GetActorLocation());
 	}
 	else Die();
@@ -40,6 +42,11 @@ void ABaseCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor* H
 	PlayHitSound(ImpactPoint);
 	SpawnHitParticles(ImpactPoint);
 
+}
+
+void ABaseCharacter::PlayDodgeMontage()
+{
+	PlayMontageSection(DodgeMontage, FName("Default"));
 }
 bool ABaseCharacter::IsAlive()
 {
@@ -130,9 +137,15 @@ void ABaseCharacter::Attack()
 
 }
 
-//void ABaseCharacter::AttackEnd()
-//{
-//}
+void ABaseCharacter::AttackEnd()
+{
+}
+
+void ABaseCharacter::DodgeEnd()
+{
+}
+
+ 
 
 int32 ABaseCharacter::PlayRandomMontageSection(UAnimMontage* Montage, const TArray<FName>& SectionNames)
 {
