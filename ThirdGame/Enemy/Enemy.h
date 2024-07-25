@@ -65,7 +65,7 @@ protected:
 
 	bool InTarGetRange(AActor* Target,double Radius);
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "combat")
 	double AcceptanceRadius = 50.f;
 	UFUNCTION()
 	AActor* choosePatrolTarget();
@@ -78,16 +78,16 @@ protected:
 
 	
 private:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "combat")
 	TSubclassOf<class AWeapon> WeaponClass;
 
 	UPROPERTY(EditAnywhere)
 	UHealthBarComponent* HealthBarWidget;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "combat")
 	double CombarRadius = 500.f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "combat")
 	double AttackRadius = 150.f;
 
 	/** AI Behavior */
