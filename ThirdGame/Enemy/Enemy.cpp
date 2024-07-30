@@ -33,30 +33,6 @@ AEnemy::AEnemy()
 
 }
 
-void AEnemy::Destroyed()
-{
-	if (EquippedWeapon) {
-		EquippedWeapon->Destroyed();
-	}
-}
-
-void AEnemy::BeginPlay()
-{
-	Super::BeginPlay();
-	
-	if (PawnSensing) PawnSensing->OnSeePawn.AddDynamic(this, &AEnemy::PawnSeen);
-	InitializeEnemy();
-}
-
-bool AEnemy::InTarGetRange(AActor* Target, double Radius)
-{
-	if (Target==nullptr) return false;
-	const double DistanceToTarget = (Target->GetActorLocation() - GetActorLocation()).Size();
-	return DistanceToTarget<=Radius;
-}
-
-
-
 void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -68,6 +44,26 @@ void AEnemy::Tick(float DeltaTime)
 		CheckPartroTarget();
 	}
 }
+
+void AEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	if (PawnSensing) PawnSensing->OnSeePawn.AddDynamic(this, &AEnemy::PawnSeen);
+	InitializeEnemy();
+
+}
+
+bool AEnemy::InTarGetRange(AActor* Target, double Radius)
+{
+	if (Target==nullptr) return false;
+	const double DistanceToTarget = (Target->GetActorLocation() - GetActorLocation()).Size();
+	return DistanceToTarget<=Radius;
+}
+
+
+
+
 
 void AEnemy::CheckPartroTarget()
 {
@@ -109,7 +105,6 @@ bool AEnemy::CanAttack()
 
 void AEnemy::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
 {
-	UE_LOG(LogTemp, Warning, TEXT("AEnemy GetHit_Implementation"));
 	Super::GetHit_Implementation(ImpactPoint, Hitter);
 	if (!IsDead()) ShowHealthBar();
 	ClearPatrolTimer();
@@ -225,9 +220,11 @@ void AEnemy::SpawnSoul()
 {
 	UWorld* World = GetWorld();
 	if (World && SoulClass&& Attributes) {
-		ASoul* SpawnSoul=World->SpawnActor<ASoul>(SoulClass, GetActorLocation(), GetActorRotation());
+		const FVector SpawnLocation = GetActorLocation() + FVector(0.f,0.f,125.f);
+		ASoul* SpawnSoul=World->SpawnActor<ASoul>(SoulClass, SpawnLocation, GetActorRotation());
 		if (SpawnSoul) {
 			SpawnSoul->SetSouls(Attributes->GetSouls());
+			SpawnSoul->SetOwner(this);
 		}
 		
 	}
@@ -244,7 +241,6 @@ void AEnemy::PatroTimerFinished()
 
 float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ENEMY TakeDamage"));
 	HandleDamage(DamageAmount);
 	CombatTarget = EventInstigator->GetPawn();
 
@@ -412,5 +408,12 @@ void AEnemy::HandleDamage(float DamageAmount)
 	if (Attributes && HealthBarWidget)
 	{
 		HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent());
+	}
+}
+
+void AEnemy::Destroyed()
+{
+	if (EquippedWeapon) {
+		EquippedWeapon->Destroyed();
 	}
 }

@@ -3,34 +3,49 @@
 
 #include "Soul.h"
 #include "ThirdGame/Interfaces/PickUpInterface.h"
+#include "Kismet/KismetSystemLibrary.h" 
 
+void ASoul::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	const double LocationZ = GetActorLocation().Z;
+	if (LocationZ >DesiredZ) {
+		const FVector DeltaLocation = FVector(0.f, 0.f, DriftRate * DeltaTime);
+		AddActorLocalOffset(DeltaLocation);
+	}
+}
 
-//void ASoul::Tick(float DeltaTime)
-//{
-//}
-//
-//void ASoul::BeginPlay()
-//{
-//}
+void ASoul::BeginPlay()
+{
+	Super::BeginPlay();
+	const FVector Start = GetActorLocation();
+	const FVector End = Start - FVector(0.f,0.f,2000.f);
+	
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+	ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery1);
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(GetOwner());
+	FHitResult HitResult;
+	UKismetSystemLibrary::LineTraceSingleForObjects(
+		this, 
+		Start,
+		End,
+		ObjectTypes,
+		false,
+		ActorsToIgnore,
+		EDrawDebugTrace::None,
+		HitResult,
+		true
+	);
+	DesiredZ = HitResult.ImpactPoint.Z + 50.f;
+}
 
 void ASoul::OnSphereOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//Super::OnSphereOverlap(OverlappedComp,OtherActor,OtherComp,OtherBodyIndex, bFromSweep,SweepResult);
-
-	//IPickUpInterface* PickUpInterface = Cast<IPickUpInterface>(OtherActor);
-	//if (PickUpInterface) {
-	//	PickUpInterface->AddSouls(this);
-	//}
-	//PickUpSystem();
-	//PickUpSound();
-	//Destroy();
-
-
+	
 	IPickUpInterface* PickupInterface = Cast<IPickUpInterface>(OtherActor);
-	UE_LOG(LogTemp, Warning, TEXT("ASoul OnSphereOverlap START"));
 	if (PickupInterface)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ASoul OnSphereOverlap PickUpInterface EXSIES"));
 		PickupInterface->AddSouls(this);
 
 		PickUpSystem();

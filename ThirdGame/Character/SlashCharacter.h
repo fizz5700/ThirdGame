@@ -42,6 +42,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EKeyPressed();
 
+	UFUNCTION(BlueprintCallable)
+	void SpawnWindWall();
+	UFUNCTION(BlueprintCallable)
+	void SendFlyObject();
+
+
 	bool CanDisarm();
 
 	bool CanArm();
@@ -53,9 +59,6 @@ public:
 	UFUNCTION()
 	void PlayEquipMontage(FName SectionName);
 
-	
-
-	
 
 	UPROPERTY(EditAnywhere)
 	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
@@ -161,7 +164,12 @@ public:
 	//FORCEINLINE void SetOverlappingItem(AItem* Item) {
 	//	OverlappingItem = Item;
 	//}
-	
+	UPROPERTY(EditAnywhere, Category = Combat)
+	TSubclassOf<class AWindWall> WindWallClass;
+
+	UPROPERTY(EditAnywhere, Category = Combat)
+	TSubclassOf<class AFlyObject> FlyObjectClass;
+
 	FORCEINLINE ECharacterState GetCharacterState() const{
 		return CharacterState;
 	}

@@ -26,9 +26,7 @@ AItem::AItem()
 void AItem::OnSphereOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	IPickUpInterface* PickUpInterface = Cast<IPickUpInterface>(OtherActor);
-	UE_LOG(LogTemp,Warning,TEXT("iTEM OnSphereOverlap START"));
 	if (PickUpInterface) {
-		UE_LOG(LogTemp, Warning, TEXT("iTEM OnSphereOverlap PickUpInterface EXSIES"));
 		PickUpInterface->SetOverlappingItem(this);
 	}
 }
@@ -90,7 +88,7 @@ void AItem::Tick(float DeltaTime)
 		AddActorWorldOffset(FVector(0.f, 0.f, TransformedSin()));
 	}
 }
-
+ 
 
  
 

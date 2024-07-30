@@ -111,9 +111,8 @@ void AWeapon::Equip(USceneComponent* InParent, FName InSocketName, AActor* NewOw
 	SetInstigator(NewInstigator);
 	
 	AttachMeshToSocket(InParent, InSocketName);
-	ItemState = EItemState::EIS_Equipped;
-	PlayEquipSound();
 	DisableSphereCollision();
+	PlayEquipSound();
 	DeactivateEmbers();
 }
 

@@ -302,25 +302,65 @@ void ASlashCharacter::EKeyPressed()
 {
 	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
 	if (OverlappingWeapon) {
+		if (EquippedWeapon)
+		{
+			EquippedWeapon->Destroy();
+		}
+
 		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"),this,this);
 		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+		OverlappingItem = nullptr;
 		EquippedWeapon = OverlappingWeapon;
 	}
-	//else {
-	//	if (CanDisarm()) {
-	//		PlayEquipMontage(FName("UnEquip"));
-	//		CharacterState = ECharacterState::ECS_Unequipped;
-	//		ActionState = EActionState::EAS_EquippingWeapon;
-	//
-	//	}else if (CanArm()) {
-	//		PlayEquipMontage(FName("Equip"));
-	//		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
-	//		ActionState = EActionState::EAS_EquippingWeapon;
-	//	}
-	//	//OverlappingItem = nullptr;
-	//}
-	OverlappingItem = nullptr;
+	else {
+		if (CanDisarm()) {
+			PlayEquipMontage(FName("UnEquip"));
+			CharacterState = ECharacterState::ECS_Unequipped;
+			ActionState = EActionState::EAS_EquippingWeapon;
+	
+		}else if (CanArm()) {
+			PlayEquipMontage(FName("Equip"));
+			CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+			ActionState = EActionState::EAS_EquippingWeapon;
+		}
+	}
+	//OverlappingItem = nullptr;
 }
+ 
+void ASlashCharacter::SpawnWindWall()
+{
+	UWorld* World = GetWorld();
+	if (World && WindWallClass) {
+		PlayRandomMontageSection(AttackMontage, SkillMontageSections);
+		const FVector SpawnLocation = GetActorLocation() + FVector(50.f, 0.f, 0.f);
+		AWindWall* SpawnWindWall = World->SpawnActor<AWindWall>(WindWallClass, SpawnLocation, GetActorRotation());
+	}
+}
+void ASlashCharacter::SendFlyObject()
+{
+	UWorld* World = GetWorld();
+	if (World && FlyObjectClass) {
+		if (ActionState != EActionState::EAS_Unoccupied || !HasEnoughStamina()) return;
+		
+		ActionState = EActionState::EAS_Attacking;
+		PlayMontageSection(SendMontage, FName("SendOut"));
+		const FVector SpawnLocation = GetActorLocation() + FVector(150.f, 0.f, 0.f);
+		AFlyObject* FlyObject = World->SpawnActor<AFlyObject>(FlyObjectClass, SpawnLocation, GetActorRotation());
+		if (FlyObject) {
+			FlyObject->SetOwner(this);
+			FlyObject->SetInstigator(this);
+		}
+		if (Attributes && SlashOverlay)
+		{
+			Attributes->UseStamina(FlyObject->GetStaminaCost());
+			SlashOverlay->SetStaminaProgressBar(Attributes->GetStaminaPercent());
+		}
+		
+	}
+}
+
+
+
 
 bool ASlashCharacter::CanDisarm()
 {

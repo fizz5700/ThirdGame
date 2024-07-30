@@ -31,10 +31,8 @@ void ABaseCharacter::Tick(float DeltaTime)
 
 void ABaseCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ABaseCharacter GetHit_Implementation"));
 	if (IsAlive() && Hitter)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ABaseCharacter GetHit_Implementation  IsAlive"));
 		DirectionalHitReact(Hitter->GetActorLocation());
 	}
 	else Die();
@@ -77,7 +75,6 @@ void ABaseCharacter::SpawnHitParticles(const FVector& ImpactPoint)
 }
 void ABaseCharacter::DirectionalHitReact(const FVector& ImpactPoint)
 {
-	UE_LOG(LogTemp, Warning, TEXT("In Base and DirectionalHitReact"));
 	const FVector Front = GetActorForwardVector();
 	const FVector ImpactLowered(ImpactPoint.X, ImpactPoint.Y, GetActorLocation().Z);
 	const FVector HitFVector = (ImpactPoint - GetActorLocation()).GetSafeNormal();
@@ -101,11 +98,6 @@ void ABaseCharacter::DirectionalHitReact(const FVector& ImpactPoint)
 	else if (Theta >= -135.f && Theta < -45.f) {
 		Section = FName("FromLeft");
 	}
-
-
-	/*if (GEngine) {
-		GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Green, FString::Printf(TEXT("Theta:%f"), Theta));
-	}*/
 	PlayMotageHitReact(Section);
 }
 
