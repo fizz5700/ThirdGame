@@ -56,7 +56,7 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 		if (ActorIsSameType(BoxHit.GetActor())) {
 			return;
 		}
-		UGameplayStatics::ApplyDamage(BoxHit.GetActor(), Damage, GetInstigator()->GetController(), this, UDamageType::StaticClass());
+		UGameplayStatics::ApplyDamage(BoxHit.GetActor(), DamageSum(), GetInstigator()->GetController(), this, UDamageType::StaticClass());
 		ExcuteGetHit(BoxHit);
 		CreateFields(BoxHit.ImpactPoint);
 	}
@@ -103,6 +103,17 @@ void AWeapon::BoxTrace(FHitResult& BoxHit)
 		BoxHit,
 		true);
 	IgnoreActors.AddUnique(BoxHit.GetActor());
+}
+
+float AWeapon::DamageSum()
+{
+	if (!ActorHasTag("Enemy")) {
+		ASlashCharacter* SlashCharacter = Cast<ASlashCharacter>(GetOwner());
+		if (SlashCharacter) {
+			return SlashCharacter->GetDamage();
+		}
+	}
+	return Damage;
 }
 
 void AWeapon::Equip(USceneComponent* InParent, FName InSocketName, AActor* NewOwner, APawn* NewInstigator)

@@ -56,7 +56,7 @@ private:
 
 	//¹¥»÷Á¦
 	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
-	int32 attack=0;
+	int32 attack=20;
 
 	//·ÀÓùÁ¦
 	UPROPERTY(EditAnywhere, Category = "Actor Attributes")

@@ -148,6 +148,16 @@ bool ASlashCharacter::ReduceCureTimes()
 	
 }
 
+float ASlashCharacter::GetDamage()
+{
+	if (Attributes) {
+		
+		return IfCriticalHit()* Attributes->GetAttack() + Attributes->GetDamageBonus();
+		
+	}
+	return 0.f;
+}
+
 void ASlashCharacter::SetHUDHealth()
 {
 	if (SlashOverlay && Attributes) {
@@ -424,6 +434,22 @@ void ASlashCharacter::PlayCureMontage(FName SectionName)
 	}
 }
 
+
+float ASlashCharacter::IfCriticalHit()
+{
+	if (Attributes) {
+		float winRate=Attributes->GetCriticalHitRate();
+		
+		// 生成一个0到1之间的随机数  
+		float randomNumber = randomStream.FRand();
+
+		// 如果随机数小于或等于中奖率，则认为中奖  
+		if (randomNumber <= winRate) {
+			return Attributes->GetCriticalDamage();
+		}
+	}
+	return 1.f;
+}
 
 void ASlashCharacter::Move(const FInputActionValue& Value)
 {

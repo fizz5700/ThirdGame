@@ -97,6 +97,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	bool ReduceCureTimes();
+
+	UFUNCTION(BlueprintCallable)
+	float GetDamage();
+
+	UFUNCTION(BlueprintCallable)
+	float IfCriticalHit();
 protected:
 	UFUNCTION()
 	void Move(const FInputActionValue& Value);
@@ -176,6 +182,10 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void SetHUDHealth();
+
+	private:
+		// 成员变量，用于存储随机数生成器
+	FRandomStream randomStream;
 public:
 
 	/** Getter and Setter for the InventoryComponent */

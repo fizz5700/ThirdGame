@@ -67,5 +67,7 @@ public:
 	}
 	TArray<AActor*> IgnoreActors;
 
+	float DamageSum();
+
 	FORCEINLINE FString GetName() const { return Name; }
 };
