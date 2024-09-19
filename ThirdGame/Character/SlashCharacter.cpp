@@ -16,6 +16,7 @@
 #include "ThirdGame/Interfaces/PickUpInterface.h"
 #include "ThirdGame/Soul.h"
 #include "ThirdGame/Treasure.h"
+#include "ThirdGame/Inventory/InventoryComponent.h"
 
 #include "Components/InputComponent.h"
 #include "GameFramework/Controller.h"
@@ -30,26 +31,17 @@ class ASoul;
 class ATreasure;
 class UAnimMontage;
 class USlashOverlay;
+class AFlyObject;
 
 ASlashCharacter::ASlashCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
-	//GetCharacterMovement()->bOrientRotationToMovement = true;
-	//GetCharacterMovement()->RotationRate = FRotator(0.f, 400.f, 0.f);
 
 	GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
 	GetMesh()->SetGenerateOverlapEvents(true);
-
-	//CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	//CameraBoom->SetupAttachment(GetRootComponent());
-	//CameraBoom->TargetArmLength = 300.f;
-
-	//ViewCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("ViewCamera"));
-	//ViewCamera->SetupAttachment(CameraBoom);
 
 	Hair = CreateDefaultSubobject<UGroomComponent>(TEXT("Hair"));
 	Hair->SetupAttachment(GetMesh());
@@ -59,37 +51,29 @@ ASlashCharacter::ASlashCharacter()
 	Eyebrows->SetupAttachment(GetMesh());
 	Eyebrows->AttachmentName = FString("head");
 
-
-	// Set size for collision capsule
-	//GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-
-	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
 	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
 
-	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
-	// instead of recompiling to adjust them
+
 	GetCharacterMovement()->JumpZVelocity = 700.f;
 	GetCharacterMovement()->AirControl = 0.35f;
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
-	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+	CameraBoom->TargetArmLength = 400.0f;
+	CameraBoom->bUsePawnControlRotation = true;
 
-	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); 
+	FollowCamera->bUsePawnControlRotation = false; 
 
 }
 
@@ -147,7 +131,22 @@ void ASlashCharacter::AddGold(ATreasure* Treasure)
 	}
 }
 
+bool ASlashCharacter::ReduceCureTimes()
+{
+	bool ifSuccess=false;
+	if (SlashOverlay && Attributes) {
+		UE_LOG(LogTemp, Warning, TEXT("BOTH HAVE"));
+		ifSuccess = Attributes->UseCureTimes();
+		if (ifSuccess) {
+			UE_LOG(LogTemp, Warning, TEXT("BOTH HAVE  ifSuccess"));
+		}
+		
+		SlashOverlay->SetCureTimes(Attributes->GetCureRemainTimes());
+	}
+	return ifSuccess;
 
+	
+}
 
 void ASlashCharacter::SetHUDHealth()
 {
@@ -168,13 +167,22 @@ void ASlashCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-
+	
 	Tags.Add(FName("EngageableTarget"));
 	InitializeSlashOverlay();
 }
 
 void ASlashCharacter::InitializeSlashOverlay()
 {
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		}
+	}
+
+	Tags.Add(FName("EngageableTarget"));
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController)
 	{
@@ -185,10 +193,10 @@ void ASlashCharacter::InitializeSlashOverlay()
 			if (SlashOverlay && Attributes)
 			{
 				SlashOverlay->SetHealthProgressBar(Attributes->GetHealthPercent());
-				//SlashOverlay->SetHealthProgressBar(0.1f);
 				SlashOverlay->SetStaminaProgressBar(1.f);
 				SlashOverlay->SetGoldText(0);
 				SlashOverlay->SetSoulsText(0);
+				SlashOverlay->SetCureTimes(Attributes->GetCureRemainTimes());
 			}
 		}
 	}
@@ -207,7 +215,6 @@ void ASlashCharacter::FinishArm()
 
 void ASlashCharacter::HitReactEnd()
 {
-	UE_LOG(LogTemp, Warning, TEXT("HitReactEnd  have changed ActionState"));
 	ActionState = EActionState::EAS_Unoccupied;
 }
 
@@ -215,8 +222,22 @@ void ASlashCharacter::Die()
 {
 	Super::Die();
 	ActionState=EActionState::EAS_Dead;
-	GetCharacterMovement()->bOrientRotationToMovement = false;
-	DisableMeshCollision();
+	//GetCharacterMovement()->bOrientRotationToMovement = false;
+	//DisableMeshCollision();
+	GetWorldTimerManager().SetTimer(ReSpawnTimer, this, &ASlashCharacter::ReSpawn, 5.f);
+}
+void ASlashCharacter::ReSpawn()
+{
+	this->SetActorLocation(NearestReSpawnVector);
+	Tags.Remove(FName("Dead"));
+	//GetCharacterMovement()->bOrientRotationToMovement = true;
+	//GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetWorldTimerManager().ClearTimer(ReSpawnTimer);
+	if (Attributes && SlashOverlay) {
+		Attributes->ResetState();
+		SetHUDHealth();
+		SlashOverlay->SetCureTimes(Attributes->GetCureRemainTimes());
+	}
 }
 
 void ASlashCharacter::DisableMeshCollision()
@@ -240,17 +261,17 @@ void ASlashCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
-
+	
 		//Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-
+	
 		//Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Move);
-
+	
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Look);
-
+	
 		//Dodge
 		EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &ASlashCharacter::Dodge);
 		
@@ -271,7 +292,7 @@ void ASlashCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor* 
 
 void ASlashCharacter::Dodge()
 {
-	if (ActionState != EActionState::EAS_Unoccupied || !HasEnoughStamina()) return;
+	if (ActionState != EActionState::EAS_Unoccupied || !HasEnoughStamina(Attributes->GetDodgeCost())) return;
 	PlayDodgeMontage();
 	ActionState = EActionState::EAS_Dodge;
 	if (Attributes && SlashOverlay)
@@ -280,9 +301,9 @@ void ASlashCharacter::Dodge()
 		SlashOverlay->SetStaminaProgressBar(Attributes->GetStaminaPercent());
 	}
 }
-bool ASlashCharacter::HasEnoughStamina()
+bool ASlashCharacter::HasEnoughStamina(float StaminaCost)
 {
-	return Attributes && Attributes->GetStamina() > Attributes->GetDodgeCost();
+	return Attributes && Attributes->GetStamina() > StaminaCost;
 }
 
 bool ASlashCharacter::IsOccupied()
@@ -300,13 +321,13 @@ void ASlashCharacter::DodgeEnd()
 
 void ASlashCharacter::EKeyPressed()
 {
+
 	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
 	if (OverlappingWeapon) {
 		if (EquippedWeapon)
 		{
 			EquippedWeapon->Destroy();
 		}
-
 		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"),this,this);
 		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
 		OverlappingItem = nullptr;
@@ -324,7 +345,6 @@ void ASlashCharacter::EKeyPressed()
 			ActionState = EActionState::EAS_EquippingWeapon;
 		}
 	}
-	//OverlappingItem = nullptr;
 }
  
 void ASlashCharacter::SpawnWindWall()
@@ -340,22 +360,13 @@ void ASlashCharacter::SendFlyObject()
 {
 	UWorld* World = GetWorld();
 	if (World && FlyObjectClass) {
-		if (ActionState != EActionState::EAS_Unoccupied || !HasEnoughStamina()) return;
-		
-		ActionState = EActionState::EAS_Attacking;
-		PlayMontageSection(SendMontage, FName("SendOut"));
 		const FVector SpawnLocation = GetActorLocation() + FVector(150.f, 0.f, 0.f);
 		AFlyObject* FlyObject = World->SpawnActor<AFlyObject>(FlyObjectClass, SpawnLocation, GetActorRotation());
 		if (FlyObject) {
 			FlyObject->SetOwner(this);
 			FlyObject->SetInstigator(this);
+			FlyObject->setDamage(Attributes->GetMagicPower());
 		}
-		if (Attributes && SlashOverlay)
-		{
-			Attributes->UseStamina(FlyObject->GetStaminaCost());
-			SlashOverlay->SetStaminaProgressBar(Attributes->GetStaminaPercent());
-		}
-		
 	}
 }
 
@@ -384,6 +395,11 @@ void ASlashCharacter::Attack()
 	
 }
 
+
+void ASlashCharacter::ReleaseSkills()
+{
+	ActionState = EActionState::EAS_ReleaseSkills;
+}
 bool ASlashCharacter::CanAttack()
 {
 	return ActionState == EActionState::EAS_Unoccupied && CharacterState != ECharacterState::ECS_Unequipped;
@@ -399,6 +415,15 @@ void ASlashCharacter::PlayEquipMontage(FName SectionName)
 	}
 }
 
+void ASlashCharacter::PlayCureMontage(FName SectionName)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && CureMontage) {
+		AnimInstance->Montage_Play(CureMontage);
+		AnimInstance->Montage_JumpToSection(SectionName, CureMontage);
+	}
+}
+
 
 void ASlashCharacter::Move(const FInputActionValue& Value)
 {
@@ -406,7 +431,7 @@ void ASlashCharacter::Move(const FInputActionValue& Value)
 	if (ActionState != EActionState::EAS_Unoccupied) return;
 
 	FVector2D MovementVector = Value.Get<FVector2D>();
-
+	UE_LOG(LogTemp,Warning,TEXT("Move CALLED"));
 	if (Controller != nullptr)
 	{
 		// find out which way is forward
@@ -420,6 +445,7 @@ void ASlashCharacter::Move(const FInputActionValue& Value)
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
 		// add movement 
+		UE_LOG(LogTemp, Warning, TEXT("Move is not null"));
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
@@ -437,3 +463,4 @@ void ASlashCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
+

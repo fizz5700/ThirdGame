@@ -25,7 +25,7 @@ private:
 	double DesiredX;
 
 	UPROPERTY(EditAnywhere)
-	float DriftRate = 200.f;
+	float DriftRate = 500.f;
 
 	UPROPERTY(EditAnywhere, Category = Combat)
 	float InLifeSpan = 8.f;
@@ -37,4 +37,5 @@ private:
 	float StaminaCost = 20.f;
 public:
 	FORCEINLINE float GetStaminaCost() const { return StaminaCost; }
+	void setDamage(float MagicPower);
 };

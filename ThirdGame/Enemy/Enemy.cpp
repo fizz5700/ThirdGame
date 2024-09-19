@@ -214,6 +214,8 @@ void AEnemy::Die()
 	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	SpawnSoul();
+
+	GetWorldTimerManager().SetTimer(WeaponTimer, this, &AEnemy::Destroyed, DeathLifeSpan);
 }
 
 void AEnemy::SpawnSoul()
@@ -414,6 +416,22 @@ void AEnemy::HandleDamage(float DamageAmount)
 void AEnemy::Destroyed()
 {
 	if (EquippedWeapon) {
-		EquippedWeapon->Destroyed();
+		EquippedWeapon->Destroy();
+	}
+}
+
+void AEnemy::frozen()
+{
+	CustomTimeDilation = 0;
+	// 设置新的定时器，延迟3秒  
+	GetWorldTimerManager().SetTimer(DelayedTimerHandle, this, &AEnemy::DisFrozen, 3.0f, false);
+}
+
+void AEnemy::DisFrozen()
+{
+	CustomTimeDilation = 1;
+	if (DelayedTimerHandle.IsValid())
+	{
+		GetWorldTimerManager().ClearTimer(DelayedTimerHandle);
 	}
 }

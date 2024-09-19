@@ -5,6 +5,7 @@
 #include "BaseCharacter.h"
 #include "CharacterTypes.h"
 #include "InputActionValue.h"
+#include "ThirdGame/Inventory/UInventoryComponent.h"
 #include "SlashCharacter.generated.h"
 
 class USpringArmComponent;
@@ -15,6 +16,7 @@ class ASoul;
 class ATreasure;
 class UAnimMontage;
 class USlashOverlay;
+class UInventoryComponent;
 
 UCLASS(Config = Game)
 class THIRDGAME_API ASlashCharacter : public ABaseCharacter, public IPickUpInterface
@@ -33,7 +35,8 @@ public:
 
 	void Dodge();
 
-	bool HasEnoughStamina();
+	UFUNCTION(BlueprintCallable)
+	bool HasEnoughStamina(float StaminaCost);
 
 	bool IsOccupied();
 
@@ -54,16 +57,21 @@ public:
 
 	virtual void Attack() override;
 
+	UFUNCTION(BlueprintCallable)
+	void ReleaseSkills();
+
 	bool CanAttack();
 
 	UFUNCTION()
 	void PlayEquipMontage(FName SectionName);
 
+	UFUNCTION(BlueprintCallable)
+	void PlayCureMontage(FName SectionName);
 
 	UPROPERTY(EditAnywhere)
 	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadWrite)
 	EActionState ActionState = EActionState::EAS_Unoccupied;
 
 
@@ -86,6 +94,9 @@ public:
 	virtual void AddSouls(class ASoul* Soul) override;
 
 	virtual void AddGold(class ATreasure* Treasure) override;
+	
+	UFUNCTION(BlueprintCallable)
+	bool ReduceCureTimes();
 protected:
 	UFUNCTION()
 	void Move(const FInputActionValue& Value);
@@ -103,9 +114,11 @@ protected:
 	void HitReactEnd();
 
 	virtual void Die() override;
+
+	void ReSpawn();
 	void DisableMeshCollision();
 
-
+	FTimerHandle ReSpawnTimer;
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Input")
 	class USpringArmComponent* CameraBoom;
@@ -121,7 +134,7 @@ protected:
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	class UInputAction* JumpAction;
-
+	
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	class UInputAction* MoveAction;
@@ -132,24 +145,26 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	class UInputAction* DodgeAction;
+
+	UPROPERTY(BlueprintReadOnly, BlueprintReadOnly, Category = "Inventory")
+	UInventoryComponent* InventoryComponent;
+
+	UPROPERTY(BlueprintReadWrite)
+	FTransform NearestReSpawn;
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector NearestReSpawnVector;
+
 private:
 
 	UPROPERTY()
 	USlashOverlay* SlashOverlay;
 
-	UPROPERTY(VisibleInstanceOnly)
-	AItem* OverlappingItem;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Montage")
 	UAnimMontage* EquipMontage;
 
-	/** Character components */
-
-	//UPROPERTY(VisibleAnywhere)
-	//USpringArmComponent* CameraBoom;
-	//
-	//UPROPERTY(VisibleAnywhere)
-	//UCameraComponent* ViewCamera;
+	UPROPERTY(EditDefaultsOnly, Category = "Montage")
+	UAnimMontage* CureMontage;
 
 	UPROPERTY(VisibleAnywhere, Category = "Hair")
 	UGroomComponent* Hair;
@@ -159,11 +174,20 @@ private:
 
 	void InitializeSlashOverlay();
 
+	UFUNCTION(BlueprintCallable)
 	void SetHUDHealth();
 public:
-	//FORCEINLINE void SetOverlappingItem(AItem* Item) {
-	//	OverlappingItem = Item;
-	//}
+
+	/** Getter and Setter for the InventoryComponent */
+	UFUNCTION(BlueprintCallable)
+	UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetInventoryComponent(UInventoryComponent* NewInventoryComponent) { InventoryComponent = NewInventoryComponent; }
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
+	AItem* OverlappingItem;
+
 	UPROPERTY(EditAnywhere, Category = Combat)
 	TSubclassOf<class AWindWall> WindWallClass;
 

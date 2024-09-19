@@ -55,11 +55,17 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* BoxTraceEnd;
 
-	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
-	float Damage = 20.f;
+	
+
+	UPROPERTY(VisibleAnywhere)
+	FString Name;
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Properties")
+	float Damage = 20.f;
 	FORCEINLINE UBoxComponent* GetWeaponBox() const {
 		return WeaponBox;
 	}
 	TArray<AActor*> IgnoreActors;
+
+	FORCEINLINE FString GetName() const { return Name; }
 };

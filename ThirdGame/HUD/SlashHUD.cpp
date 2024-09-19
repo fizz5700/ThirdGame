@@ -8,13 +8,19 @@ void ASlashHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
+	
+}
+
+void ASlashHUD::InitializationHud()
+{
 	UWorld* World = GetWorld();
 	if (World) {
-		APlayerController* Controller=World->GetFirstPlayerController();
+		APlayerController* Controller = World->GetFirstPlayerController();
 		if (Controller && SlashOverlayClass) {
-			SlashOverlay=CreateWidget<USlashOverlay>(Controller,SlashOverlayClass);
+			SlashOverlay = CreateWidget<USlashOverlay>(Controller, SlashOverlayClass);
+			SlashOverlay->AddToPlayerScreen();
 			SlashOverlay->AddToViewport();
 		}
 	}
-	
 }

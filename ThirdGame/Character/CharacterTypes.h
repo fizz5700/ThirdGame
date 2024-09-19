@@ -14,7 +14,8 @@ enum class EActionState :uint8
 	EAS_Attacking UMETA(DisplayName = "Attacking"),
 	EAS_EquippingWeapon UMETA(DisplayName = "Equipping Weapon"),
 	EAS_Dodge UMETA(DisplayName = "Dodge"),
-	EAS_Dead UMETA(DisplayName = "Dead")
+	EAS_Dead UMETA(DisplayName = "Dead"),
+	EAS_ReleaseSkills UMETA(DisplayName = "ReleaseSkills"),
 
 };
 UENUM(BlueprintType)
@@ -39,5 +40,14 @@ enum class EEnemyState :uint8
 	EES_Chasing UMETA(DisplayName = "Chasing"),
 	EES_Attacking UMETA(DisplayName = "Attacking"),
 	EES_Engaged UMETA(DisplayName = "Engaged")
+
+};
+UENUM(BlueprintType)
+enum class EItemType :uint8
+{
+	EIT_Weapon UMETA(DisplayName = "Weapon"),
+	EIT_Consumable UMETA(DisplayName = "Consumable"),
+	EIT_QuestItem UMETA(DisplayName = "QuestItem"),
+	EIT_Equipment UMETA(DisplayName = "Equipment")
 
 };

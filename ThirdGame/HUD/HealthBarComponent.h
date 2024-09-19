@@ -14,6 +14,7 @@ class THIRDGAME_API UHealthBarComponent : public UWidgetComponent
 {
 	GENERATED_BODY()
 public:
+	UFUNCTION(BlueprintCallable)
 	void SetHealthPercent(float Percent);
 
 private:

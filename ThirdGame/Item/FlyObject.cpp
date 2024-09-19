@@ -23,7 +23,7 @@ void AFlyObject::BeginPlay()
 	Tags.Add(FName("FlyObject"));
 
 	const FVector Start = GetActorLocation();
-	const FVector End = Start + FVector(350.f, 0.f, 0.f);
+	const FVector End = Start + FVector(0.f, 0.f, 0.f);
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery1);
@@ -81,4 +81,9 @@ void AFlyObject::ExcuteGetHit(AActor* OtherActor)
 	if (HitInterface) {
 		HitInterface->Execute_GetHit(OtherActor, OtherActor->GetActorLocation(), GetOwner());
 	}
+}
+
+void AFlyObject::setDamage(float MagicPower)
+{
+	Damage += MagicPower;
 }

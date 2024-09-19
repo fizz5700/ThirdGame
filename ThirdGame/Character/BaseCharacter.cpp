@@ -31,6 +31,7 @@ void ABaseCharacter::Tick(float DeltaTime)
 
 void ABaseCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
 {
+	
 	if (IsAlive() && Hitter)
 	{
 		DirectionalHitReact(Hitter->GetActorLocation());
@@ -151,6 +152,7 @@ int32 ABaseCharacter::PlayRandomMontageSection(UAnimMontage* Montage, const TArr
 void ABaseCharacter::DisableCapsule()
 {
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 
@@ -162,6 +164,16 @@ bool ABaseCharacter::CanAttack()
 int32 ABaseCharacter::PlayAttackMontage()
 {
 	return PlayRandomMontageSection(AttackMontage, AttackMontageSections);
+}
+
+void ABaseCharacter::setDefense(int32 Num)
+{
+	Defense = Num;
+}
+
+int32 ABaseCharacter::getDefense()
+{
+	return Defense;
 }
 
 void ABaseCharacter::PlayMontageSection(UAnimMontage* Montage, const FName& SectionName)
@@ -198,7 +210,9 @@ void ABaseCharacter::HandleDamage(float DamageAmount)
 {
 	if (Attributes)
 	{
-		Attributes->ReceiveDamage(DamageAmount);
+		IfGetHit = true;
+		DamageNumber = DamageAmount-Defense;
+		Attributes->ReceiveDamage(DamageNumber);
 	}
 }
 

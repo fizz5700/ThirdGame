@@ -80,7 +80,7 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	AWeapon* EquippedWeapon;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UAttributeComponent* Attributes;
 	/*
    *  Animation montages
@@ -142,7 +142,21 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	double WarpTargetDistance = 75.f;
 
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	int32 Defense=5.f;
+
 public:
 	FORCEINLINE TEnumAsByte<EDeathPose> GetDeathPose() const { return DeathPose; }
+
+	UPROPERTY(BlueprintReadWrite, Category = "Combat")
+	float DamageNumber;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Combat")
+	bool IfGetHit=false;
 	
+	UFUNCTION(BlueprintCallable)
+	void setDefense(int32 Num);
+
+	UFUNCTION(BlueprintCallable)
+	int32 getDefense();
 };

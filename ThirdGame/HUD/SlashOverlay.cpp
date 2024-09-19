@@ -20,6 +20,13 @@ void USlashOverlay::SetStaminaProgressBar(float Percent)
 	}
 }
 
+void USlashOverlay::SetCureTimes(int32 Num)
+{
+	if (CureText) {
+		CureText->SetText(FText::FromString(FString::Printf(TEXT("%d"), Num)));
+	}
+}
+
 void USlashOverlay::SetGoldText(int32 Gold)
 {
 	if (GoldText) {

@@ -19,9 +19,13 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Slash")
 	TSubclassOf<USlashOverlay> SlashOverlayClass;
 
-	UPROPERTY()
-	USlashOverlay* SlashOverlay;
+	
+
+	UFUNCTION(BlueprintCallable)
+	void InitializationHud();
 public:
+	UPROPERTY(BlueprintReadWrite)
+	USlashOverlay* SlashOverlay;
 	FORCEINLINE USlashOverlay* GetSlashOverlay() const { return SlashOverlay; }
 
 };

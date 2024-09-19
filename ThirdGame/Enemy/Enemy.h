@@ -28,6 +28,8 @@ public:
 
 	FTimerHandle PatroTimer;
 
+	FTimerHandle WeaponTimer;
+
 	void PatroTimerFinished();
 	
 	virtual void Die() override;
@@ -51,6 +53,13 @@ public:
 	virtual void Destroyed() override;
 	UPROPERTY(EditAnywhere)
 	double PatrolRadius = 200.f;
+
+	UFUNCTION(BlueprintCallable)
+	void frozen();
+
+	FTimerHandle DelayedTimerHandle;
+
+	void DisFrozen();
 protected:
 	/**
 	*Components
